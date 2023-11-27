@@ -1,14 +1,14 @@
-import Link from 'next/link';
-import { FaMapSigns } from 'react-icons/fa';
-import { BsSearch } from 'react-icons/bs';
-import { Input } from '@/components/ui/input';
-import { IoMenuSharp } from 'react-icons/io5';
-import { Button } from '@/components/ui/button';
-import { MdFamilyRestroom } from 'react-icons/md';
-import { FaPerson } from 'react-icons/fa6';
-import { FaHome } from 'react-icons/fa';
-import { IoMdNotifications } from 'react-icons/io';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { BsSearch } from 'react-icons/bs';
+import { FaHome, FaMapSigns } from 'react-icons/fa';
+import { FaPerson } from 'react-icons/fa6';
+import { IoMdNotifications } from 'react-icons/io';
+import { IoMenuSharp } from 'react-icons/io5';
+import { MdFamilyRestroom } from 'react-icons/md';
+import useMediaQuery from '@/hooks/use-media-query';
 
 const navOptions = [
   {
@@ -34,6 +34,8 @@ const navOptions = [
 ] as const;
 
 const Navbar = () => {
+  const isSm = useMediaQuery('(min-width: 640px)');
+
   return (
     <header className="flex items-center gap-x-2 py-2 sticky top-0 justify-between bg-[#E4F3FF]">
       <div className="flex items-center gap-x-4">
@@ -48,21 +50,28 @@ const Navbar = () => {
           <Input className="pl-10 w-full" type="text" placeholder="Search" />
         </form>
       </div>
-      <nav className="hidden sm:flex items-center gap-x-6">
-        {navOptions.map(({ title, href, Icon }) => (
-          <Link key={href} href={href} className="flex items-center gap-x-2 ">
-            <span className="text-2xl text-primary-600">{Icon}</span>
-            <p>{title}</p>
-          </Link>
-        ))}
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </nav>
-      <Button variant="ghost" size="sm" className="sm:hidden">
-        <IoMenuSharp className="text-2xl" />
-      </Button>
+      {isSm && (
+        <>
+          <nav className="flex items-center gap-x-6">
+            {navOptions.map(({ title, href, Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-x-2 ">
+                <span className="text-2xl text-primary-600">{Icon}</span>
+                <p>{title}</p>
+              </Link>
+            ))}
+          </nav>
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <Button variant="ghost" size="sm">
+            <IoMenuSharp className="text-2xl" />
+          </Button>
+        </>
+      )}
     </header>
   );
 };
