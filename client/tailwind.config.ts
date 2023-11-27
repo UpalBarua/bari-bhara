@@ -1,36 +1,83 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
-      keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
+      colors: {
+        primary: {
+          '50': '#f0f8ff',
+          '100': '#dbf0ff',
+          '200': '#97b3c4',
+          '300': '#6f97ae',
+          '400': '#4e7488',
+          '500': '#3c525d',
+          '600': '#283b48',
+          '700': '#1c2831',
+          '800': '#11181c',
+          '900': '#01121e',
+          '950': '#000000',
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
+        accent: {
+          '50': '#f8f7fd',
+          '100': '#eeecf8',
+          '200': '#e4e1f5',
+          '300': '#cec5ec',
+          '400': '#b4a3e0',
+          '500': '#997fd2',
+          '600': '#8660c3',
+          '700': '#774fb0',
+          '800': '#634294',
+          '900': '#533979',
+          '950': '#352452',
+        },
+        green: {
+          '50': '#f1fcf3',
+          '100': '#dff9e5',
+          '200': '#c0f2cb',
+          '300': '#8ee7a3',
+          '400': '#56d274',
+          '500': '#2ba84a',
+          '600': '#21983f',
+          '700': '#1e7734',
+          '800': '#1c5f2e',
+          '900': '#194e28',
+          '950': '#082b13',
+        },
+        red: {
+          '50': '#fff0f2',
+          '100': '#ffdde2',
+          '200': '#ffc0c8',
+          '300': '#ff94a2',
+          '400': '#ff576d',
+          '500': '#ff2340',
+          '600': '#ff0022',
+          '700': '#d7001d',
+          '800': '#b1031a',
+          '900': '#920a1c',
+          '950': '#50000b',
+        },
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-}
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/forms')],
+};

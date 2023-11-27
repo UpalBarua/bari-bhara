@@ -1,14 +1,16 @@
+import Navbar from '@/components/navbar';
+
 type RootLayoutProps = {
   children: React.ReactNode;
 };
 
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
-    <main>
-      <header>header</header>
+    <div className="max-w-6xl mx-auto px-2">
+      <Navbar />
       {children}
-      <footer>footer</footer>
-    </main>
+      {/* <footer>footer</footer> */}
+    </div>
   );
 };
 

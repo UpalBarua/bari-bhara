@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+  @apply bg-primary-100/50 text-primary-900/90 dark:bg-primary-900 min-h-screen dark:text-primary-50/90;
+}
+
+* {
+  /* border: 1px solid rgba(255, 0, 0, 0.2); */
+}
