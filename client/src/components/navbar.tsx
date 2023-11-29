@@ -9,6 +9,7 @@ import { IoMdNotifications } from 'react-icons/io';
 import { IoMenuSharp } from 'react-icons/io5';
 import { MdFamilyRestroom } from 'react-icons/md';
 import useMediaQuery from '@/hooks/use-media-query';
+import { ThemeToggle } from './theme-toggle';
 
 const navOptions = [
   {
@@ -37,7 +38,7 @@ const Navbar = () => {
   const isSm = useMediaQuery('(min-width: 640px)');
 
   return (
-    <header className="flex items-center gap-x-2 py-2 sticky top-0 justify-between bg-[#E4F3FF]">
+    <header className="flex items-center gap-x-2 py-2 sticky top-0 justify-between bg-[#E4F3FF] z-20">
       <div className="flex items-center gap-x-4">
         <Link className="flex items-center gap-x-2.5" href="/">
           <FaMapSigns className="text-2xl text-accent-600" />
@@ -50,6 +51,7 @@ const Navbar = () => {
           <Input className="pl-10 w-full" type="text" placeholder="Search" />
         </form>
       </div>
+      <ThemeToggle />
       {isSm && (
         <>
           <nav className="flex items-center gap-x-6">

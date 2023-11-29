@@ -1,10 +1,7 @@
-import { ThemeToggle } from '@/components/theme-toggle';
-
 const HomePage = () => {
   return (
     <section>
       <h1>Bari Bhara</h1>
-      <ThemeToggle />
       <p>
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora
         dolorum quidem ea consequuntur corporis ipsum numquam hic harum corrupti

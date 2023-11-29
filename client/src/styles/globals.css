@@ -4,7 +4,7 @@
 
 html,
 body {
-  @apply bg-primary-100/50 text-primary-900/90 dark:bg-primary-900 min-h-screen dark:text-primary-50/90;
+  @apply bg-accent-100/50 text-primary-900/90 dark:bg-primary-900 min-h-screen dark:text-primary-50/90;
 }
 
 * {
