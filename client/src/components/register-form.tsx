@@ -1,120 +1,187 @@
-import { IoIosArrowRoundForward } from 'react-icons/io';
+import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import { z } from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { auth } from '@/firebase/firebase.config';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useForm } from 'react-hook-form';
+import { FaSpinner } from 'react-icons/fa6';
+import { IoIosArrowRoundForward } from 'react-icons/io';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-const RegisterForm = () => {
-  const registerFormSchema = z
-    .object({
-      name: z
-        .string()
-        .min(1, { message: 'Name is missing' })
-        .max(30, { message: 'Name is more than 30 characters' }),
-      email: z.string().email({ message: 'Not a valid email' }),
-      password: z
-        .string()
-        .min(6, { message: 'Password must be more than 6 characters' }),
-      password2: z.string(),
-    })
-    .refine(({ password, password2 }) => password === password2, {
-      message: 'Passwords do not match',
-      path: ['password2'],
-    });
+const userRoles = ['owner', 'renter'] as const;
 
-  type RegisterForm = z.infer<typeof registerFormSchema>;
-
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(registerFormSchema),
+const registerFormSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, { message: 'Name is required' })
+      .max(30, { message: 'Name cannot exceed 30 characters' }),
+    email: z.string().email({ message: 'Please enter a valid email address' }),
+    role: z.enum(userRoles).or(z.literal('')),
+    password: z
+      .string()
+      .min(6, { message: 'Password must be at least 6 characters long' }),
+    confirmPassword: z.string(),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
-  const onSubmit = (data: RegisterForm) => {};
+type RegisterForm = z.infer<typeof registerFormSchema>;
+
+const RegisterForm = () => {
+  const form = useForm<RegisterForm>({
+    resolver: zodResolver(registerFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: '',
+    },
+  });
+
+  const { mutate: createNewUser, isPending } = useMutation({
+    mutationFn: async ({ name, email, password, role }: RegisterForm) => {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        await axios.post('/users', {
+          name,
+          email,
+          role,
+          imgUrl: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${name}`,
+        });
+        toast.success('Successfully created new account');
+      } catch (error) {
+        if (error instanceof Error) {
+          return toast.error(error.message);
+        }
+
+        toast.error('Something went wrong');
+      }
+    },
+  });
 
   return (
-    <form className="space-y-6 pt-4" onSubmit={handleSubmit(onSubmit)}>
-      <fieldset className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="name">Full Name</Label>
-          {/* <span className="text-sm text-red-500">this is a error message</span> */}
-        </div>
-        <Input
-          type="text"
-          id="name"
-          placeholder="John Doe"
-          {...register('name')}
+    <Form {...form}>
+      <form
+        className="space-y-4 pt-4"
+        onSubmit={form.handleSubmit((data) => createNewUser(data))}>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </fieldset>
-      <fieldset className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="email">Email Address</Label>
-          {/* <span className="text-sm text-red-500">this is a error message</span> */}
-        </div>
-        <Input
-          type="text"
-          id="email"
-          placeholder="john@example.com"
-          {...register('email')}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email Address</FormLabel>
+              <FormControl>
+                <Input placeholder="email@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </fieldset>
-      <fieldset className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          {/* <span className="text-sm text-red-500">this is a error message</span> */}
-        </div>
-        <Input
-          type="password"
-          id="password"
-          placeholder="Strong password"
-          {...register('password')}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Strong password"
+                  {...field}
+                  type="password"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </fieldset>
-      <fieldset className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password2">Reenter Password</Label>
-          {/* <span className="text-sm text-red-500">this is a error message</span> */}
-        </div>
-        <Input
-          type="password"
-          id="password2"
-          placeholder="Repeat the password"
-          {...register('password2')}
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Repeat your password"
+                  {...field}
+                  type="password"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </fieldset>
-      <fieldset className="space-y-3.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="role">Account Type</Label>
-          {/* <span className="text-sm text-red-500">this is a error message</span> */}
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>User Role</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a user role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {userRoles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end pt-3">
+          <Button type="submit" disabled={isPending}>
+            <span>Register</span>
+            {isPending ? (
+              <FaSpinner className="text-2xl animate-spin" />
+            ) : (
+              <IoIosArrowRoundForward className="text-2xl text-primary-50" />
+            )}
+          </Button>
         </div>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Account Type" />
-          </SelectTrigger>
-          <SelectContent id="role">
-            <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="dark">Dark</SelectItem>
-            <SelectItem value="system">System</SelectItem>
-          </SelectContent>
-        </Select>
-      </fieldset>
-      <Button type="submit">
-        <span>Register</span>
-        <IoIosArrowRoundForward className="text-2xl" />
-      </Button>
-    </form>
+      </form>
+    </Form>
   );
 };
 
