@@ -1,10 +1,12 @@
-import { ThemeToggle } from '@/components/theme-toggle';
+import { useAuthContext } from '@/context/auth-context';
 
 const HomePage = () => {
+  const { user } = useAuthContext();
+
   return (
     <section>
       <h1>Bari Bhara</h1>
-      <ThemeToggle />
+      <p className="text-2xl">{user?.email}</p>
     </section>
   );
 };
